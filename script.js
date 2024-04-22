@@ -1,41 +1,58 @@
-let timerInterval;
-let tenthsOfSeconds = 0;
+document.getElementById('startBtn').addEventListener('click', startTimer);
+document.getElementById('pauseBtn').addEventListener('click', pauseTimer);
+document.getElementById('resetBtn').addEventListener('click', resetTimer);
 
-function startStopwatch() {
-    document.getElementById('startBtn').disabled = true;
-    document.getElementById('pauseBtn').disabled = false;
-    document.getElementById('resetBtn').disabled = false;
+let timerId;
+let timePassed = 0;
+let isRunning = false;
 
-    timerInterval = setInterval(() => {
-        tenthsOfSeconds++;
-        updateDisplay();
-    }, 100); // Update display every 100 milliseconds
+function formatTime(milliseconds) {
+    const totalSeconds = Math.floor(milliseconds / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
 
-function pauseStopwatch() {
-    clearInterval(timerInterval);
+    if (hours > 0) {
+        return `${hours}h ${minutes.toString().padStart(2, '0')}m ${seconds.toString().padStart(2, '0')}s`;
+    } else if (minutes > 0) {
+        return `${minutes}m ${seconds.toString().padStart(2, '0')}s`;
+    } else {
+        return `${seconds.toString().padStart(2, '0')}s`;
+    }
+}
+
+function updateStopwatch() {
+    timePassed += 10; // Increment by 10 milliseconds
+    displayStopwatch(timePassed);
+}
+
+function displayStopwatch(time) {
+    document.getElementById('stopwatch').textContent = formatTime(time);
+}
+
+function startTimer() {
+    if (!isRunning) {
+        isRunning = true;
+        timerId = setInterval(updateStopwatch, 10); // Update every 10 milliseconds
+        document.getElementById('startBtn').disabled = true;
+        document.getElementById('pauseBtn').disabled = false;
+    }
+}
+
+function pauseTimer() {
+    if (isRunning) {
+        isRunning = false;
+        clearInterval(timerId);
+        document.getElementById('startBtn').disabled = false;
+        document.getElementById('pauseBtn').disabled = true;
+    }
+}
+
+function resetTimer() {
+    isRunning = false;
+    clearInterval(timerId);
+    timePassed = 0;
+    displayStopwatch(timePassed);
     document.getElementById('startBtn').disabled = false;
     document.getElementById('pauseBtn').disabled = true;
-}
-
-function resetStopwatch() {
-    clearInterval(timerInterval);
-    tenthsOfSeconds = 0;
-    updateDisplay();
-    document.getElementById('startBtn').disabled = false;
-    document.getElementById('pauseBtn').disabled = true;
-    document.getElementById('resetBtn').disabled = true;
-}
-
-function updateDisplay() {
-    const hours = Math.floor(tenthsOfSeconds / (3600 * 10));
-    const minutes = Math.floor((tenthsOfSeconds % (3600 * 10)) / (60 * 10));
-    const seconds = Math.floor((tenthsOfSeconds % (60 * 10)) / 10);
-    const tenths = tenthsOfSeconds % 10;
-
-    const formattedTime = `${pad(hours)}:${pad(minutes)}:${pad(seconds)}.${tenths}`;
-    document.getElementById('display').textContent = formattedTime;
-}
-
-function pad(value) {
-    return String(value).padStart(2, '0');
 }
