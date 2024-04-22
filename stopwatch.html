@@ -5,14 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stopwatch</title>
     <link rel="stylesheet" href="style.css">
-
 </head>
 <body>
 
-    <div class="container"></div>
+    <div id="display">00:00:00</div>
+    <div class="btn">
+        <button id="startBtn" onclick="startStopwatch()">Start</button>
+        <button id="pauseBtn" onclick="pauseStopwatch()" disabled>Pause</button>
+        <button id="resetBtn" onclick="resetStopwatch()" disabled>Reset</button>
+    </div>
 
 </body>
-
 <script src="script.js"></script>
-
 </html>
